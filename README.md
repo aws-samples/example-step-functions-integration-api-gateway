@@ -1,5 +1,8 @@
-# Example Step functions API Gateway integration 
+# Example Step Functions API Gateway integration 
 
+The new Step Functions integration with API Gateway provides an additional resource type, ` arn:aws:states:::apigateway:invoke ` and can be used with both Standard and Express workflows. It allows customers to call API Gateway REST APIs and API Gateway.
+
+![enter image description here](/repoResources/statemachine.png)
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders:
 
 - functions - Code for the application's Lambda functions to check the value of, buy, or sell shares of a stock.
@@ -8,18 +11,7 @@ This project contains source code and supporting files for a serverless applicat
 
 This application creates a mock stock trading workflow which runs on a pre-defined schedule (note that the schedule is disabled by default to avoid incurring charges). It demonstrates the power of Step Functions to orchestrate Lambda functions and other AWS resources to form complex and robust workflows, coupled with event-driven development using Amazon EventBridge.
 
-AWS Step Functions lets you coordinate multiple AWS services into serverless workflows so you can build and update apps quickly. Using Step Functions, you can design and run workflows that stitch together services, such as AWS Lambda, AWS Fargate, and Amazon SageMaker, into feature-rich applications.
-
-The application uses several AWS resources, including Step Functions state machines, Lambda functions and an EventBridge rule trigger. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
-
-If you prefer to use an integrated development environment (IDE) to build and test the Lambda functions within your application, you can use the AWS Toolkit. The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI to build and deploy serverless applications on AWS. The AWS Toolkit also adds a simplified step-through debugging experience for Lambda function code. See the following links to get started:
-
-* [PyCharm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [IntelliJ](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
-* [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
-
-The AWS Toolkit for VS Code includes full support for state machine visualization, enabling you to visualize your state machine in real time as you build. The AWS Toolkit for VS Code includes a language server for Amazon States Language, which lints your state machine definition to highlight common errors, provides auto-complete support, and code snippets for each state, enabling you to build state machines faster.
+When the workflow is run, a Lambda function is invoked via a GET request from API Gateway to the /check resource. This returns a random stock value between 1 and 100.  This value is evaluated in the Buy or Sell choice step, depending on if it is less or more than 50. The Sell and Buy states use the API Gateway integration to invoke a Lambda function, with a POST method. A stock_value is provided in the POST request body. A transaction_result is returned in the ResponseBody and provided to the next state. The final state writes a log of the transition to a DynamoDB table.
 
 ## Deploy the sample application
 
@@ -32,6 +24,14 @@ To use the SAM CLI, you need the following tools:
 * Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
 
 To build and deploy your application for the first time, run the following in your shell:
+
+1.	Clone the GitHub repository:
+```bash
+$ git clone https://github.com/aws-samples/example-step-functions-integration-api-gateway.git
+$ cd example-step-functions-integration-api-gateway 
+```
+
+2.	Deploy the applicaiton resources:
 
 ```bash
 sam build
@@ -48,39 +48,17 @@ The first command will build the source of your application. The second command 
 
 You can find your State Machine ARN in the output values displayed after deployment.
 
-## Use the SAM CLI to build and test locally
+## Manually trigger the workflow from a terminal window:
 
-Build the Lambda functions in your application with the `sam build --use-container` command.
-
-```bash
-sfn-apigw-example2$ sam build
+``` bash
+aws stepFunctions start-execution \
+--state-machine-arn <StockTradingStateMachineArnValue>
 ```
 
-The SAM CLI installs dependencies defined in `functions/*/package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
 
-## Add a resource to your application
-The application template uses AWS Serverless Application Model (AWS SAM) to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources such as functions, triggers, and APIs. For resources not included in [the SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use standard [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resource types.
 
-## Fetch, tail, and filter Lambda function logs
 
-To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs` lets you fetch logs generated by your deployed Lambda function from the command line. In addition to printing the logs on the terminal, this command has several nifty features to help you quickly find the bug.
-
-`NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
-
-```bash
-sfn-apigw-example2$ sam logs -n StockCheckerFunction --stack-name sfn-apigw-example2 --tail
-```
-
-You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
-
-## Unit tests
-
-Tests are defined in the `functions/*/tests` folder in this project. Use NPM to install the [Mocha test framework](https://mochajs.org/) and run unit tests.
-
-```bash
-sfn-apigw-example2$ cd functions/stock-checker
-stock-checker$ npm install
-stock-checker$ npm run test
+## Cleanup
 ```
 
 ## Cleanup
@@ -92,6 +70,8 @@ aws cloudformation delete-stack --stack-name sfn-apigw-example2
 ```
 
 ## Resources
+
+See this [AWS compute blog](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for more information on the Step Functions service integration with API Gateway.
 
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
