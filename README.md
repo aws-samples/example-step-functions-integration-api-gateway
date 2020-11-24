@@ -2,6 +2,8 @@
 
 The new Step Functions integration with API Gateway provides an additional resource type, ` arn:aws:states:::apigateway:invoke ` and can be used with both Standard and Express workflows. It allows customers to call API Gateway REST APIs and API Gateway.
 
+See this [AWS compute blog](https://aws.amazon.com/blogs/compute/introducing-amazon-api-gateway-service-integration-for-aws-step-functions/) for more information on the Step Functions service integration with API Gateway.
+
 ![API Gateway Step Fcuntions service integration](/repoResources/stateMachine.png)
  
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders:
@@ -72,7 +74,7 @@ aws cloudformation delete-stack --stack-name sfn-apigw-example2
 
 ## Resources
 
-See this [AWS compute blog](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for more information on the Step Functions service integration with API Gateway.
+See this [AWS compute blog](https://aws.amazon.com/blogs/compute/introducing-amazon-api-gateway-service-integration-for-aws-step-functions/) for more information on the Step Functions service integration with API Gateway.
 
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
