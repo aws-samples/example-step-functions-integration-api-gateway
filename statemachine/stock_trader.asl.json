@@ -1,0 +1,121 @@
+{
+    "Comment": "A state machine that does mock stock trading.",
+    "StartAt": "Check Stock Value",
+    "States": {
+        "Check Stock Value": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::apigateway:invoke",
+            "Parameters": {
+                "ApiEndpoint":"${APIEndPoint}",
+                "Method":"GET",
+                "Stage":"Prod",
+                "Path":"${StockCheckPath}",
+                "RequestBody.$":"$",
+                "AuthType":"NO_AUTH"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 15,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 1.5
+                }
+            ],
+            "Next": "Buy or Sell?"
+        },
+        "Buy or Sell?": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.ResponseBody.stock_price",
+                    "NumericLessThanEquals": 50,
+                    "Next": "Buy Stock"
+                }
+            ],
+            "Default": "Sell Stock"
+        },
+        "Sell Stock": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::apigateway:invoke",
+            "Parameters": {
+                "ApiEndpoint":"${APIEndPoint}",
+                "Method":"POST",
+                "Stage":"Prod",
+                "Path":"${StockSellPath}",
+                "RequestBody.$":"$.ResponseBody",
+                "AuthType":"NO_AUTH"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 2,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 1
+                }
+            ],
+            "Next": "Record Transaction"
+        },
+        "Buy Stock": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::apigateway:invoke",
+            "Parameters": {
+                "ApiEndpoint":"${APIEndPoint}",
+                "Method":"POST",
+                "Stage":"Prod",
+                "Path":"${StockBuyPath}",
+                "RequestBody.$":"$.ResponseBody",
+                "AuthType":"NO_AUTH"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 2,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 1
+                }
+            ],
+            "Next": "Record Transaction"
+        },
+        "Record Transaction": {
+            "Type": "Task",
+            "Resource": "${DDBPutItem}",
+            "Parameters": {
+                "TableName": "${DDBTable}",
+                "Item": {
+                    "Id": {
+                        "S.$": "$.ResponseBody.id"
+                    },
+                    "Type": {
+                        "S.$": "$.ResponseBody.type"
+                    },
+                    "Price": {
+                        "N.$": "$.ResponseBody.price"
+                    },
+                    "Quantity": {
+                        "N.$": "$.ResponseBody.qty"
+                    },
+                    "Timestamp": {
+                        "S.$": "$.ResponseBody.timestamp"
+                    }
+                }
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "States.TaskFailed"
+                    ],
+                    "IntervalSeconds": 20,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 10
+                }
+            ],
+            "End": true
+        }
+    }
+}
