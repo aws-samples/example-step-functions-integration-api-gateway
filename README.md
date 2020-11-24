@@ -3,6 +3,7 @@
 The new Step Functions integration with API Gateway provides an additional resource type, ` arn:aws:states:::apigateway:invoke ` and can be used with both Standard and Express workflows. It allows customers to call API Gateway REST APIs and API Gateway.
 
 ![API Gateway Step Fcuntions service integration](/repoResources/stateMachine.png)
+ 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders:
 
 - functions - Code for the application's Lambda functions to check the value of, buy, or sell shares of a stock.
