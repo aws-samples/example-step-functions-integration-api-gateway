@@ -3,3 +3,5 @@ node_modules
 samconfig.toml
 .env
 .vscode
+functions/.DS_Store
+.DS_Store
