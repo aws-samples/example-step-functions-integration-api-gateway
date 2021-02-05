@@ -8,13 +8,13 @@ See this [AWS compute blog](https://aws.amazon.com/blogs/compute/introducing-ama
  
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders:
 
-- functions - Code for the application's Lambda functions to check the value of, buy, or sell shares of a stock.
+- functions - Code for the application's Lambda functions to check the value of buy or sell shares of a stock.
 - statemachines - Definition for the state machine that orchestrates the stock trading workflow.
 - template.yaml - A template that defines the application's AWS resources.
 
 This application creates a mock stock trading workflow which runs on a pre-defined schedule (note that the schedule is disabled by default to avoid incurring charges). It demonstrates the power of Step Functions to orchestrate Lambda functions and other AWS resources to form complex and robust workflows, coupled with event-driven development using Amazon EventBridge.
 
-When the workflow is run, a Lambda function is invoked via a GET request from API Gateway to the /check resource. This returns a random stock value between 1 and 100.  This value is evaluated in the Buy or Sell choice step, depending on if it is less or more than 50. The Sell and Buy states use the API Gateway integration to invoke a Lambda function, with a POST method. A stock_value is provided in the POST request body. A transaction_result is returned in the ResponseBody and provided to the next state. The final state writes a log of the transition to a DynamoDB table.
+When the workflow is run, a Lambda function is invoked via a GET request from API Gateway to the /check resource. This returns a random stock value between 1 and 100.  This value is evaluated in the Buy or Sell choice step, depending on if it is less or more than 50. The Sell and Buy states use the API Gateway integration to invoke a Lambda function, with a POST method. A stock_value is provided in the POST request body. A transaction_result is returned in the Response Body and provided to the next state. The final state writes a log of the transition to a DynamoDB table.
 
 ## Deploy the sample application
 
