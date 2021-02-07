@@ -29,9 +29,9 @@ exports.lambdaHandler = async (event, context) => {
     let transaction_result = {
         'id': crypto.randomBytes(16).toString("hex"), // Unique ID for the transaction
         'price': stock_price.toString(), // Price of each share
-        'type': "sell", // Type of transaction(buy/ sell)
-        'qty': getRandomInt(10).toString(),  // Number of shares bought / sold(We are mocking this as a random integer between 1 and 10)
-        'timestamp': date.toISOString(),  // Timestamp of the when the transaction was completed
+        'type': "sell", // Type of transaction (buy/ sell)
+        'qty': getRandomInt(10).toString(),  // Number of shares bought / sold (We are mocking this as a random integer between 1 and 10)
+        'timestamp': date.toISOString(),  // Timestamp for when the transaction was completed
     }
     return { 
         statusCode: 200,
