@@ -34,7 +34,7 @@ $ git clone https://github.com/aws-samples/example-step-functions-integration-ap
 $ cd example-step-functions-integration-api-gateway 
 ```
 
-2.	Deploy the applicaiton resources:
+2.	Deploy the application resources:
 
 ```bash
 sam build
@@ -54,7 +54,7 @@ You can find your State Machine ARN in the output values displayed after deploym
 ## Manually trigger the workflow from a terminal window:
 
 ``` bash
-aws stepFunctions start-execution \
+aws stepfunctions start-execution \
 --state-machine-arn <StockTradingStateMachineArnValue>
 ```
 
