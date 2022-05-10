@@ -50,7 +50,7 @@ Resources:
     Properties:
       CodeUri: functions/stock-checker/
       Handler: app.lambdaHandler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Events:
         Api:
           Type: Api
@@ -63,7 +63,7 @@ Resources:
     Properties:
       CodeUri: functions/stock-seller/
       Handler: app.lambdaHandler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Events:
         Api:
           Type: Api
@@ -76,7 +76,7 @@ Resources:
     Properties:
       CodeUri: functions/stock-buyer/
       Handler: app.lambdaHandler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Events:
         Api:
           Type: Api
